@@ -11,7 +11,7 @@ public class Man : MonoBehaviour
     public RuntimeAnimatorController walking;
     public RuntimeAnimatorController running;
     public RuntimeAnimatorController standing;
-
+    public RuntimeAnimatorController jumping;
     public float moveSpeed = 5.0f; // キャラクターの移動速度
 
     public bool damaged;

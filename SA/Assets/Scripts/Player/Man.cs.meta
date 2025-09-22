@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 52fa1d03f6f130a47a2391610329185e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - player: {instanceID: 0}
+  - Cam: {instanceID: 0}
+  - walking: {instanceID: 0}
+  - running: {instanceID: 0}
+  - standing: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
