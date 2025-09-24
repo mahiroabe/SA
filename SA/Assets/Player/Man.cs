@@ -42,7 +42,7 @@ public class Man : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             // "W"キーが押されたときの処理をここに記述
-            print("歩くぞお");
+            print("歩きます");
             animator.runtimeAnimatorController = walking;                   
 
             //プレイヤーの正面に向かって移動する
