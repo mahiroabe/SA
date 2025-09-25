@@ -9,6 +9,7 @@ MonoImporter:
   - walking: {instanceID: 0}
   - running: {instanceID: 0}
   - standing: {instanceID: 0}
+  - jumping: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
