@@ -1,44 +1,23 @@
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
     void Start()
     {
-        PhotonNetwork.ConnectUsingSettings(); // AppIdで接続
+        PhotonNetwork.ConnectUsingSettings(); // Photonへ接続
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("接続成功: Masterに入った");
-        PhotonNetwork.JoinLobby(); // ロビーに入る
+        Debug.Log("Master接続成功");
+        PhotonNetwork.JoinLobby();           // ロビー参加
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("ロビー入室完了");
-        // ここでUIにルーム一覧を表示できる
+        SceneManager.LoadScene("Lobby");     // Lobbyシーンへ遷移
     }
-
-
-    public void CreateRoom(string roomName)
-    {
-        RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 5; // 最大5人
-        PhotonNetwork.CreateRoom(roomName, options);
-    }
-
-    public void JoinRoom(string roomName)
-    {
-        PhotonNetwork.JoinRoom(roomName);
-    }
-
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("ルームに参加: " + PhotonNetwork.CurrentRoom.Name);
-        // プレイヤー生成
-        PhotonNetwork.Instantiate("PlayerPrefab", Vector3.zero, Quaternion.identity);
-    }
-
 }
