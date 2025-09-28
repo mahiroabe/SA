@@ -1,7 +1,8 @@
+using Photon.Pun;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviourPun
 {
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
@@ -20,6 +21,8 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        // 自分以外操作しないように
+        //if (!PhotonView.IsMaine) return;
         Move();
         Jump();
     }
