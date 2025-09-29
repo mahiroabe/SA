@@ -17,6 +17,8 @@ public class PlayerMove : MonoBehaviourPun
 
         // 倒れないように回転制御
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rb.drag = 2f;           // 摩擦力を追加し滑りにくくする
+        rb.angularDrag = 5f;    // 回転の摩擦力を追加し安定させる
     }
 
     void Update()
@@ -40,11 +42,16 @@ public class PlayerMove : MonoBehaviourPun
 
         Vector3 moveDir = (camForward.normalized * v + camRight.normalized * h).normalized;
 
-        // 移動
-        Vector3 targetVelocity = moveDir * moveSpeed;
+        // 坂道補正：床の法線に沿って移動方向を投影
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
+        {
+            moveDir = Vector3.ProjectOnPlane(moveDir, hit.normal);
+        }
+
+        // 移動速度を反映
         Vector3 velocity = rb.velocity;
-        velocity.x = targetVelocity.x;
-        velocity.z = targetVelocity.z;
+        velocity.x = moveDir.x * moveSpeed;
+        velocity.z = moveDir.z * moveSpeed;
         rb.velocity = velocity;
 
         // 向き変更（動いているときだけ）
@@ -63,20 +70,26 @@ public class PlayerMove : MonoBehaviourPun
     }
 
     // 接地判定
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionStay(Collision collision)
     {
+        isGrounded = true;
+
+        // 動く床に乗っていたら親にする
         if (collision.gameObject.CompareTag("MovingPlatform"))
         {
             transform.SetParent(collision.transform);
         }
     }
 
+    // 接地判定解除
     void OnCollisionExit(Collision collision)
     {
+        isGrounded = false;
+
+        // 動く床から降りたら親を解除
         if (collision.gameObject.CompareTag("MovingPlatform"))
         {
             transform.SetParent(null);
         }
     }
-
 }
