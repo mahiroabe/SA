@@ -2,13 +2,14 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// ルーム一覧の1エントリを管理するUIスクリプト
 /// </summary>
 public class RoomEntryUI : MonoBehaviour
 {
-    public Text roomNameText; // ルーム名表示
+    public TMP_Text roomNameText; // ルーム名表示
     public Text countText;    // 人数表示
 
     private string roomName;  // Join時に使う内部保存名

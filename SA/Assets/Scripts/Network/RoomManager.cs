@@ -3,13 +3,14 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using TMPro;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     [Header("UI 参照")]
-    public InputField roomNameInput;     // ルーム名入力用の InputField
-    public Transform roomListParent;     // ルーム一覧を並べる親オブジェクト（Vertical Layout Group 推奨）
-    public GameObject roomEntryPrefab;   // ルーム情報を1件表示するプレハブ (RoomEntryUI スクリプト付き)
+    public TMP_InputField roomNameInput;    // ルーム名入力用の InputField
+    public Transform roomListParent;        // ルーム一覧を並べる親オブジェクト（Vertical Layout Group 推奨）
+    public GameObject roomEntryPrefab;      // ルーム情報を1件表示するプレハブ (RoomEntryUI スクリプト付き)
 
     public void OnClickCreate()
     {
