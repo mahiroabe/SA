@@ -19,12 +19,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
     // 内部用
     private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>();
 
+    private bool isLoadingScene = false;
+
     void Start()
     {
         // PUN接続開始
         statusText.text = "Connecting to Master...";
         PhotonNetwork.AutomaticallySyncScene = true; // 同じシーンを全員に同期
-        PhotonNetwork.ConnectUsingSettings();        // AppIDやバージョンは PhotonServerSettings に設定済み
     }
 
     #region PUN Callback
@@ -32,16 +33,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         statusText.text = "Connected. Joining Lobby...";
         PhotonNetwork.JoinLobby();
+        Debug.Log("OnConnectedToMaster()");
     }
 
     public override void OnJoinedLobby()
     {
         statusText.text = "Joined Lobby";
+        Debug.Log("OnJoinedLobby()");
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
         statusText.text = $"Disconnected: {cause}";
+        Debug.Log("OnDisconnected(DisconnectCause cause)");
     }
 
     // ルーム一覧更新
@@ -55,13 +59,18 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 cachedRoomList[info.Name] = info;
         }
         RefreshRoomListUI();
+        Debug.Log("OnRoomListUpdate(List<RoomInfo> roomList)");
     }
 
     public override void OnJoinedRoom()
     {
+        if (isLoadingScene) return;  // 既にロード中ならスルー
+        isLoadingScene = true;
+
         statusText.text = $"Joined Room : {PhotonNetwork.CurrentRoom.Name}";
         // 例：ゲームシーンへ遷移
-        PhotonNetwork.LoadLevel("GameScene");
+        // PhotonNetwork.LoadLevel("Stage01");
+        Debug.Log("OnJoinedRoom()");
     }
     #endregion
 
@@ -70,19 +79,30 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void CreateRoom()
     {
         string roomName = string.IsNullOrEmpty(roomNameInput.text)
-            ? $"Room_{Random.Range(1000,9999)}"
+            ? $"Room_{Random.Range(1000, 9999)}"
             : roomNameInput.text;
 
-        RoomOptions options = new RoomOptions { MaxPlayers = 4 };
-        PhotonNetwork.CreateRoom(roomName, options);
+        RoomOptions options = new RoomOptions
+        {
+            MaxPlayers = 5,
+            IsOpen = true,
+            IsVisible = true,
+            Plugins = new string[0]  // これで「プラグインなし」を強制
+        };
+
+        PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
+
         statusText.text = $"Creating Room : {roomName}";
+        Debug.Log("CreateRoom()");
     }
+
 
     /// <summary>RoomEntryUI から呼ばれる参加処理</summary>
     public void JoinRoom(string roomName)
     {
         PhotonNetwork.JoinRoom(roomName);
         statusText.text = $"Joining Room : {roomName}";
+        Debug.Log("JoinRoom(string roomName)");
     }
     #endregion
 
@@ -97,5 +117,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
             GameObject entry = Instantiate(roomEntryPrefab, roomListParent);
             entry.GetComponent<RoomEntryUI>().Setup(info.Name, this);
         }
+        Debug.Log("RefreshRoomListUI()");
     }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        statusText.text = $"CreateRoom failed: {message}";
+        Debug.LogError($"OnCreateRoomFailed: {message} (code {returnCode})");
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        statusText.text = $"JoinRoom failed: {message}";
+        Debug.LogError($"OnJoinRoomFailed: {message} (code {returnCode})");
+    }
+
 }

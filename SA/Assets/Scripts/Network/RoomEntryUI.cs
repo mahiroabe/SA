@@ -16,6 +16,7 @@ public class RoomEntryUI : MonoBehaviour
         roomName = name;
         manager = mgr;
         roomNameText.text = name;
+
     }
 
     public void OnClickJoin()
