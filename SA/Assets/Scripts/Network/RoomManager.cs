@@ -1,101 +1,101 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
-using TMPro;
 
+/// <summary>
+/// PUN2 ã®æ¥ç¶šã€œãƒ­ãƒ“ãƒ¼ã€œéƒ¨å±‹ä¸€è¦§ã€œå‚åŠ ã‚’ç®¡ç†
+/// </summary>
 public class RoomManager : MonoBehaviourPunCallbacks
 {
-    [Header("UI QÆ")]
-    public TMP_InputField roomNameInput;    // ƒ‹[ƒ€–¼“ü—Í—p‚Ì InputField
-    public Transform roomListParent;        // ƒ‹[ƒ€ˆê——‚ğ•À‚×‚éeƒIƒuƒWƒFƒNƒgiVertical Layout Group „§j
-    public GameObject roomEntryPrefab;      // ƒ‹[ƒ€î•ñ‚ğ1Œ•\¦‚·‚éƒvƒŒƒnƒu (RoomEntryUI ƒXƒNƒŠƒvƒg•t‚«)
+    [Header("UI References")]
+    [SerializeField] private TMP_InputField roomNameInput;   // éƒ¨å±‹åå…¥åŠ›æ¬„
+    [SerializeField] private Transform roomListParent;       // ScrollView Content
+    [SerializeField] private GameObject roomEntryPrefab;     // ãƒ«ãƒ¼ãƒ 1ä»¶ãƒ—ãƒ¬ãƒãƒ–
+    [SerializeField] private TMP_Text statusText;            // çŠ¶æ…‹è¡¨ç¤ºï¼ˆä»»æ„ï¼‰
 
-    public void OnClickCreate()
+    // å†…éƒ¨ç”¨
+    private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>();
+
+    void Start()
     {
-        // “ü—Í‚ª‹ó‚È‚çƒ‰ƒ“ƒ_ƒ€‚È”Ô†‚ğ•t—^
-        string name = roomNameInput.text;
-        if (string.IsNullOrEmpty(name))
-            name = "Room_" + Random.Range(1000, 9999);
-
-        // ƒ‹[ƒ€İ’èFÅ‘å5lEŒöŠJEQ‰Á‰Â
-        RoomOptions options = new RoomOptions
-        {
-            MaxPlayers = 5,
-            IsVisible = true,
-            IsOpen = true
-        };
-
-        // Photon‚Öì¬ƒŠƒNƒGƒXƒg
-        PhotonNetwork.CreateRoom(name, options);
+        // PUNæ¥ç¶šé–‹å§‹
+        statusText.text = "Connecting to Master...";
+        PhotonNetwork.AutomaticallySyncScene = true; // åŒã˜ã‚·ãƒ¼ãƒ³ã‚’å…¨å“¡ã«åŒæœŸ
+        PhotonNetwork.ConnectUsingSettings();        // AppIDã‚„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯ PhotonServerSettings ã«è¨­å®šæ¸ˆã¿
     }
 
-    /// <summary>
-    /// [Join Random ƒ{ƒ^ƒ“] Šù‘¶ƒ‹[ƒ€‚Éƒ‰ƒ“ƒ_ƒ€Q‰Á
-    /// </summary>
-    public void OnClickJoinRandom()
+    #region PUN Callback
+    public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinRandomRoom();
+        statusText.text = "Connected. Joining Lobby...";
+        PhotonNetwork.JoinLobby();
     }
 
-    /// <summary>
-    /// ˆê——UI‚©‚çŒÂ•Ê‚É“üº‚·‚éÛ‚ÉŒÄ‚Ô
-    /// RoomEntryUI ‚©‚ç Join ƒ{ƒ^ƒ“‚ÅŒÄ‚Ño‚³‚ê‚é
-    /// </summary>
-    public void JoinSpecificRoom(string roomName)
+    public override void OnJoinedLobby()
     {
-        PhotonNetwork.JoinRoom(roomName);
+        statusText.text = "Joined Lobby";
     }
 
-    /// <summary>
-    /// ƒƒr[“à‚Ìƒ‹[ƒ€ˆê——‚ªXV‚³‚ê‚é‚½‚Ñ‚ÉŒÄ‚Î‚ê‚é
-    /// </summary>
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        statusText.text = $"Disconnected: {cause}";
+    }
+
+    // ãƒ«ãƒ¼ãƒ ä¸€è¦§æ›´æ–°
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        // Šù‘¶‚ÌUIƒGƒ“ƒgƒŠ‚ğ‘Síœ
+        foreach (RoomInfo info in roomList)
+        {
+            if (info.RemovedFromList || !info.IsOpen || !info.IsVisible)
+                cachedRoomList.Remove(info.Name);
+            else
+                cachedRoomList[info.Name] = info;
+        }
+        RefreshRoomListUI();
+    }
+
+    public override void OnJoinedRoom()
+    {
+        statusText.text = $"Joined Room : {PhotonNetwork.CurrentRoom.Name}";
+        // ä¾‹ï¼šã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã¸é·ç§»
+        PhotonNetwork.LoadLevel("GameScene");
+    }
+    #endregion
+
+    #region UI Buttons
+    /// <summary>ã€ŒCreateã€ãƒœã‚¿ãƒ³ã‹ã‚‰å‘¼ã¶</summary>
+    public void CreateRoom()
+    {
+        string roomName = string.IsNullOrEmpty(roomNameInput.text)
+            ? $"Room_{Random.Range(1000,9999)}"
+            : roomNameInput.text;
+
+        RoomOptions options = new RoomOptions { MaxPlayers = 4 };
+        PhotonNetwork.CreateRoom(roomName, options);
+        statusText.text = $"Creating Room : {roomName}";
+    }
+
+    /// <summary>RoomEntryUI ã‹ã‚‰å‘¼ã°ã‚Œã‚‹å‚åŠ å‡¦ç†</summary>
+    public void JoinRoom(string roomName)
+    {
+        PhotonNetwork.JoinRoom(roomName);
+        statusText.text = $"Joining Room : {roomName}";
+    }
+    #endregion
+
+    /// <summary>ãƒ«ãƒ¼ãƒ ä¸€è¦§UIã‚’æ›´æ–°</summary>
+    private void RefreshRoomListUI()
+    {
         foreach (Transform child in roomListParent)
             Destroy(child.gameObject);
 
-        // ó‚¯æ‚Á‚½•”‰®î•ñ‚ğUI‚É¶¬
-        foreach (RoomInfo info in roomList)
+        foreach (var info in cachedRoomList.Values)
         {
-            if (info.RemovedFromList) continue; // •Â‚¶‚ç‚ê‚½•”‰®‚Í–³‹
-
             GameObject entry = Instantiate(roomEntryPrefab, roomListParent);
-            // RoomEntryUI ‚É•”‰®î•ñ‚ğ“n‚µ‚Ä•\¦‚ğXV
-            entry.GetComponent<RoomEntryUI>().SetInfo(info);
+            entry.GetComponent<RoomEntryUI>().Setup(info.Name, this);
         }
-    }
-
-    /// <summary>
-    /// ©•ª‚ª•”‰®‚É“üºŠ®—¹‚µ‚½
-    /// ‚±‚±‚ÅƒQ[ƒ€ƒV[ƒ“‚ğƒ[ƒh‚·‚é
-    /// </summary>
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("Joined Room: " + PhotonNetwork.CurrentRoom.Name);
-
-        // MasterClient ‚ª LoadLevel ‚ğŒÄ‚Ô‚Æ‘Sˆõ‚ª“¯‚¶ƒV[ƒ“‚Ö
-        if (PhotonNetwork.IsMasterClient)
-            PhotonNetwork.LoadLevel("Stage01");
-    }
-
-    /// <summary>
-    /// ‘¼ƒvƒŒƒCƒ„[‚ª•”‰®‚É“ü‚Á‚Ä‚«‚½‚Æ‚«
-    /// </summary>
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        Debug.Log("Q‰Á: " + newPlayer.NickName);
-        // ‚±‚±‚ÅƒvƒŒƒCƒ„[ƒŠƒXƒgUI‚ğXV‚·‚éˆ—‚ğ“ü‚ê‚Ä‚à—Ç‚¢
-    }
-
-    /// <summary>
-    /// ‘¼ƒvƒŒƒCƒ„[‚ª•”‰®‚ğ‘Şo‚µ‚½‚Æ‚«
-    /// </summary>
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        Debug.Log("‘Şo: " + otherPlayer.NickName);
-        // ‘ŞoŒã‚ÌUIXV‚È‚Ç‚ğ‚±‚±‚Ås‚¤
     }
 }

@@ -1,35 +1,25 @@
-using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// ルーム一覧の1エントリを管理するUIスクリプト
+/// 部屋名を表示し Join ボタンを押すと RoomManager.JoinRoom を呼ぶ
 /// </summary>
 public class RoomEntryUI : MonoBehaviour
 {
-    public TMP_Text roomNameText; // ルーム名表示
-    public Text countText;    // 人数表示
+    [SerializeField] private TMP_Text roomNameText;
+    private string roomName;
+    private RoomManager manager;
 
-    private string roomName;  // Join時に使う内部保存名
-
-    /// <summary>
-    /// RoomManager から部屋情報を受け取ってUIを更新
-    /// </summary>
-    public void SetInfo(RoomInfo info)
+    public void Setup(string name, RoomManager mgr)
     {
-        roomName = info.Name;
-        roomNameText.text = info.Name;
-        countText.text = $"{info.PlayerCount}/{info.MaxPlayers}";
+        roomName = name;
+        manager = mgr;
+        roomNameText.text = name;
     }
 
-    /// <summary>
-    /// Join ボタン押下時
-    /// RoomManager の JoinSpecificRoom を呼ぶ
-    /// </summary>
     public void OnClickJoin()
     {
-        PhotonNetwork.JoinRoom(roomName);
+        manager.JoinRoom(roomName);
     }
 }
