@@ -5,19 +5,28 @@ using UnityEngine.SceneManagement;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
-    void Start()
+    private bool isConnecting = false;
+
+    void Update()
     {
-        PhotonNetwork.ConnectUsingSettings(); // Photonへ接続
+        // 左クリックしたら接続開始
+        if (Input.GetMouseButtonDown(0) && !isConnecting)
+        {
+            isConnecting = true;
+            Debug.Log("Photonへ接続開始...");
+            PhotonNetwork.ConnectUsingSettings(); // Photonへ接続
+        }
     }
 
     public override void OnConnectedToMaster()
     {
         Debug.Log("Master接続成功");
-        PhotonNetwork.JoinLobby();           // ロビー参加
+        PhotonNetwork.JoinLobby(); // ロビー参加
     }
 
     public override void OnJoinedLobby()
     {
-        SceneManager.LoadScene("Lobby");     // Lobbyシーンへ遷移
+        Debug.Log("Lobbyに参加しました");
+        SceneManager.LoadScene("Lobby"); // Lobbyシーンへ遷移
     }
 }
