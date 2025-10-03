@@ -69,10 +69,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         statusText.text = $"Joined Room : {PhotonNetwork.CurrentRoom.Name}";
         // 例：ゲームシーンへ遷移
-        // PhotonNetwork.LoadLevel("Stage01");
+        PhotonNetwork.LoadLevel("Stage01");
         Debug.Log("OnJoinedRoom()");
     }
     #endregion
+    
 
     #region UI Buttons
     /// <summary>「Create」ボタンから呼ぶ</summary>
