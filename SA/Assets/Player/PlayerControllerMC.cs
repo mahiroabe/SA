@@ -21,6 +21,8 @@ public class PlayerControllerMC : MonoBehaviour
     private float yaw;
     private float pitch;
 
+    [SerializeField] private SkinnedMeshRenderer headMesh; // 頭モデル
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -59,6 +61,7 @@ public class PlayerControllerMC : MonoBehaviour
             // FPS：頭の位置にカメラを置く
             cam.position = head.position;
             cam.rotation = head.rotation;
+            //sheadMesh.enabled = false; // FPSの時に頭を非表示
         }
         else
         {
@@ -67,6 +70,7 @@ public class PlayerControllerMC : MonoBehaviour
             Vector3 offset = rot * new Vector3(0, 0, -tpsDistance);
             cam.position = head.position + offset;
             cam.LookAt(head.position);
+            //headMesh.enabled = true; // TPSの時は表示
         }
     }
 
