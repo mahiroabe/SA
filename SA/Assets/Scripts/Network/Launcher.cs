@@ -21,7 +21,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         {
             isConnecting = true;
             Debug.Log("Photonへ接続開始...");
-            text.text = "Photonへ接続開始...";
+            text.text = "Connecting to Photon...";
             PhotonNetwork.ConnectUsingSettings(); // Photonへ接続
         }
     }
@@ -29,14 +29,14 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Master接続成功");
-        text.text = "Master接続成功";
+        text.text = "Connected to Master Server";
         PhotonNetwork.JoinLobby(); // ロビー参加
     }
 
     public override void OnJoinedLobby()
     {
         Debug.Log("Lobbyに参加しました");
-        text.text = "Lobbyに参加しました";
+        text.text = "Joined Lobby";
         SceneManager.LoadScene("Lobby"); // Lobbyシーンへ遷移
     }
 }
