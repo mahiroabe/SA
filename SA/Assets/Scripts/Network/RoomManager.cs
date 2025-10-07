@@ -69,7 +69,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         statusText.text = $"Joined Room : {PhotonNetwork.CurrentRoom.Name}";
         // 例：ゲームシーンへ遷移
-        PhotonNetwork.LoadLevel("Stage01");
+        PhotonNetwork.LoadLevel("Stage");
         Debug.Log("OnJoinedRoom()");
     }
     #endregion
