@@ -25,7 +25,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         // PUN接続開始
         statusText.text = "Connecting to Master...";
-        PhotonNetwork.AutomaticallySyncScene = true; // 同じシーンを全員に同期
+        // PhotonNetwork.AutomaticallySyncScene = true; // 同じシーンを全員に同期
     }
 
     #region PUN Callback
@@ -133,4 +133,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
         Debug.LogError($"OnJoinRoomFailed: {message} (code {returnCode})");
     }
 
+    public void GoToNextStage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // この部屋の全員だけを対象にシーンを変更
+            photonView.RPC("LoadNextStageRPC", RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    void LoadNextStageRPC()
+    {
+        // 各部屋ごとに個別でステージ移行
+        PhotonNetwork.LoadLevel("Stage02");
+    }
 }
