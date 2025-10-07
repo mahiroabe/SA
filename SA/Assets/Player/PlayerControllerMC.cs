@@ -1,6 +1,7 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PlayerControllerMC : MonoBehaviour
+public class PlayerControllerMC : MonoBehaviourPun
 {
     [Header("References")]
     public Transform head;   // 頭（視点基準）
@@ -33,10 +34,22 @@ public class PlayerControllerMC : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // --- カメラの自動割り当て ---
+        if (cam == null)
+            cam = GetComponentInChildren<Camera>()?.transform;
+
+        // --- 初期視点方向合わせ ---
+        yaw = body.eulerAngles.y;
+
+        // --- 他人のカメラは無効化 ---
+        if (!photonView.IsMine && cam != null)
+            cam.gameObject.SetActive(false);
     }
 
     void Update()
     {
+        if (!photonView.IsMine) return;
         HandleView();
         Move();
         Jump();
