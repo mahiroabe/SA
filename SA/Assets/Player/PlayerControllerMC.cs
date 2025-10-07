@@ -15,13 +15,13 @@ public class PlayerControllerMC : MonoBehaviour
     public float sensitivity = 2f;
     public float tpsDistance = 3f;
     public bool isFPS = false; // F5で切り替え
+    public float fpsCamHeightOffset = 0.45f; // FPS時のカメラ高さ調整
 
     private Rigidbody rb;
     private bool isGrounded;
     private float yaw;
     private float pitch;
-
-    [SerializeField] private SkinnedMeshRenderer headMesh; // 頭モデル
+    private Transform currentPlatform; //床追従用 
 
     void Start()
     {
@@ -38,11 +38,10 @@ public class PlayerControllerMC : MonoBehaviour
         Move();
         Jump();
         RotateBody();
+        UpdatePlatformParent();
 
         if (Input.GetKeyDown(KeyCode.F5))
-        {
             isFPS = !isFPS;
-        }
     }
 
     void HandleView()
@@ -59,9 +58,10 @@ public class PlayerControllerMC : MonoBehaviour
         if (isFPS)
         {
             // FPS：頭の位置にカメラを置く
-            cam.position = head.position;
+            Vector3 eyePos = head.position + Vector3.up * fpsCamHeightOffset;
+            cam.position = eyePos;
             cam.rotation = head.rotation;
-            //sheadMesh.enabled = false; // FPSの時に頭を非表示
+            //headMesh.enabled = false; // FPSの時に頭を非表示
         }
         else
         {
@@ -102,16 +102,75 @@ public class PlayerControllerMC : MonoBehaviour
 
     void RotateBody()
     {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        bool isMoving = Mathf.Abs(h) > 0.1f || Mathf.Abs(v) > 0.1f;
+
         // HeadとBodyの水平角度差
         float angleDiff = Vector3.SignedAngle(body.forward, head.forward, Vector3.up);
 
-        if (Mathf.Abs(angleDiff) > 45f)
+        if (isMoving)
         {
+            // --- 動いてる時：マイクラ式で即回転 ---
             Quaternion targetRot = Quaternion.Euler(0, head.eulerAngles.y, 0);
-            body.rotation = Quaternion.Lerp(body.rotation, targetRot, Time.deltaTime * 5f);
+            body.rotation = Quaternion.Lerp(body.rotation, targetRot, Time.deltaTime * 10f);
+        }
+        else
+        {
+            // --- 止まってる時：45°を超えたら回転 ---
+            if (Mathf.Abs(angleDiff) > 45f)
+            {
+                Quaternion targetRot = Quaternion.Euler(0, head.eulerAngles.y, 0);
+                body.rotation = Quaternion.Lerp(body.rotation, targetRot, Time.deltaTime * 5f);
+            }
         }
     }
 
-    void OnCollisionStay(Collision collision) => isGrounded = true;
-    void OnCollisionExit(Collision collision) => isGrounded = false;
+    void OnCollisionStay(Collision collision)
+    {
+        isGrounded = true;
+
+        if (collision.gameObject.CompareTag("MovingPlatform"))
+        {
+            currentPlatform = collision.transform;
+        }
+    }
+
+    // --- 地面判定 ---
+    void OnCollisionExit(Collision collision)
+    {
+        isGrounded = false;
+
+        if (collision.transform == currentPlatform)
+        {
+            currentPlatform = null;
+        }
+    }
+
+    // 床に追従するため親子関係を更新
+    void UpdatePlatformParent()
+    {
+        if (currentPlatform != null)
+        {
+            transform.SetParent(currentPlatform);
+        }
+        else
+        {
+            transform.SetParent(null);
+        }
+    }
+    /*/ --- 地面判定の別方法 ---
+    void OnCollisionStay(Collision collision)
+    {
+        // 地面に接触しているか判定
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
+            {
+                isGrounded = true;
+                return;
+            }
+        }
+        isGrounded = false;
+    }*/
 }
