@@ -23,8 +23,11 @@ public class PlayerControllerMC : MonoBehaviour
     private float pitch;
     private Transform currentPlatform; //床追従用 
 
+    // public GameObject playerPrefab;
+
     void Start()
     {
+        // PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
@@ -159,6 +162,7 @@ public class PlayerControllerMC : MonoBehaviour
             transform.SetParent(null);
         }
     }
+
     /*/ --- 地面判定の別方法 ---
     void OnCollisionStay(Collision collision)
     {
