@@ -23,6 +23,12 @@ public class PlayerControllerMC2 : MonoBehaviourPun
     private float yaw;
     private float pitch;
     private Transform currentPlatform; //床追従用 
+    private Vector3 lastPlatformPos;
+    private Quaternion lastPlatformRot;
+    private Vector3 lastAngularVelocity;  // 床の回転速度
+    private float rotationInertiaTime = 1.0f; // 慣性が続く時間（秒）
+    private float rotationInertiaTimer = 0f;
+
 
     // public GameObject playerPrefab;
 
@@ -54,7 +60,6 @@ public class PlayerControllerMC2 : MonoBehaviourPun
         Move();
         Jump();
         RotateBody();
-        UpdatePlatformParent();
 
         if (Input.GetKeyDown(KeyCode.F5))
             isFPS = !isFPS;
@@ -144,50 +149,80 @@ public class PlayerControllerMC2 : MonoBehaviourPun
 
     void OnCollisionStay(Collision collision)
     {
-        isGrounded = true;
-
-        if (collision.gameObject.CompareTag("MovingPlatform"))
+        // 地面判定
+        foreach (ContactPoint contact in collision.contacts)
         {
-            currentPlatform = collision.transform;
+            // 上向きの面に接触している場合のみ「床」とみなす
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.7f)
+            {
+                isGrounded = true;
+
+                if (collision.gameObject.CompareTag("MovingPlatform") ||
+                    collision.gameObject.CompareTag("RotatingPlatform"))
+                {
+                    // 新しい床に乗ったとき初期化
+                    if (currentPlatform != collision.transform)
+                    {
+                        currentPlatform = collision.transform;
+                        lastPlatformPos = currentPlatform.position;
+                        lastPlatformRot = currentPlatform.rotation;
+                    }
+                }
+                return;
+            }
         }
+
+        // 上向きでない場合は床扱いしない
+        isGrounded = false;
     }
 
-    // --- 地面判定 ---
     void OnCollisionExit(Collision collision)
     {
-        isGrounded = false;
-
         if (collision.transform == currentPlatform)
         {
             currentPlatform = null;
         }
+        isGrounded = false;
     }
 
-    // 床に追従するため親子関係を更新
-    void UpdatePlatformParent()
+    void LateUpdate()
+    {
+        UpdatePlatformMovement();
+    }
+
+    // 床の移動・回転に追従（親子化しない）
+    void UpdatePlatformMovement()
     {
         if (currentPlatform != null)
         {
-            transform.SetParent(currentPlatform);
+            // --- 床の移動・回転差分 ---
+            Vector3 platformDelta = currentPlatform.position - lastPlatformPos;
+            Quaternion rotationDelta = currentPlatform.rotation * Quaternion.Inverse(lastPlatformRot);
+
+            // --- プレイヤーを床と一緒に動かす ---
+            Vector3 relativePos = transform.position - currentPlatform.position;
+            relativePos = rotationDelta * relativePos;
+            transform.position = currentPlatform.position + relativePos + platformDelta;
+            transform.rotation = rotationDelta * transform.rotation;
+
+            // --- 床の回転速度を保存 ---
+            rotationDelta.ToAngleAxis(out float angle, out Vector3 axis);
+            if (angle > 180f) angle -= 360f;
+            lastAngularVelocity = axis * angle / Time.deltaTime;
+
+            // 記録更新
+            lastPlatformPos = currentPlatform.position;
+            lastPlatformRot = currentPlatform.rotation;
+            rotationInertiaTimer = 0f; // 床にいる間は慣性タイマーをリセット
         }
-        else
+        else if (rotationInertiaTimer < rotationInertiaTime)
         {
-            transform.SetParent(null);
+            // --- 床から離れた後の慣性回転処理 ---
+            float t = 1f - (rotationInertiaTimer / rotationInertiaTime);
+            Quaternion delta = Quaternion.Euler(lastAngularVelocity * Time.deltaTime * t);
+            transform.rotation = delta * transform.rotation;
+
+            rotationInertiaTimer += Time.deltaTime;
         }
     }
-
-    /*/ --- 地面判定の別方法 ---
-    void OnCollisionStay(Collision collision)
-    {
-        // 地面に接触しているか判定
-        foreach (ContactPoint contact in collision.contacts)
-        {
-            if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
-            {
-                isGrounded = true;
-                return;
-            }
-        }
-        isGrounded = false;
-    }*/
 }
