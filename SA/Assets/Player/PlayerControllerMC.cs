@@ -1,5 +1,6 @@
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerControllerMC : MonoBehaviourPun
 {
@@ -29,6 +30,7 @@ public class PlayerControllerMC : MonoBehaviourPun
     private float rotationInertiaTime = 1.0f; // 慣性が続く時間（秒）
     private float rotationInertiaTimer = 0f;
 
+    private Animator animator;
 
     // public GameObject playerPrefab;
 
@@ -36,6 +38,7 @@ public class PlayerControllerMC : MonoBehaviourPun
     {
         // PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();    // Animatorコンポーネントを取得
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -111,6 +114,7 @@ public class PlayerControllerMC : MonoBehaviourPun
         vel.x = dir.x * moveSpeed;
         vel.z = dir.z * moveSpeed;
         rb.velocity = vel;
+        animator.SetFloat("Speed", new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude);
     }
 
     void Jump()
