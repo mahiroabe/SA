@@ -116,7 +116,7 @@ public class PlayerControllerMC : MonoBehaviourPun
         vel.x = dir.x * moveSpeed;
         vel.z = dir.z * moveSpeed;
         rb.velocity = vel;
-        animator.SetFloat("Speed", new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude);
+        //animator.SetFloat("Speed", new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude);
     }
 
     void Jump()

@@ -44,8 +44,8 @@ GameObject:
   - component: {fileID: 7344080420259575695}
   - component: {fileID: 964418890795310933}
   - component: {fileID: 2775295768645618396}
-  - component: {fileID: -1373201389316909302}
   - component: {fileID: 6647026729143021155}
+  - component: {fileID: 4394428740504638687}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -157,28 +157,6 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!95 &-1373201389316909302
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1550857336647619450}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e745d69be29b84e41a77bb70762b375c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!65 &6647026729143021155
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -200,6 +178,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.9880112, y: 4.827056, z: 2.008886}
   m_Center: {x: 0.0014902949, y: 1.913528, z: 0.28199494}
+--- !u!95 &4394428740504638687
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550857336647619450}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 03067bd8996197d4b9bd60b9b8f301fb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1697246849861924921
 GameObject:
   m_ObjectHideFlags: 0
