@@ -51,14 +51,16 @@ public class PlayerControllerMC : MonoBehaviourPun
         // --- 初期視点方向合わせ ---
         yaw = body.eulerAngles.y;
 
+        /*
         // --- 他人のカメラは無効化 ---
         if (!photonView.IsMine && cam != null)
             cam.gameObject.SetActive(false);
+        */
     }
 
     void Update()
     {
-        if (!photonView.IsMine) return;
+        // if (!photonView.IsMine) return;
         HandleView();
         Move();
         Jump();
