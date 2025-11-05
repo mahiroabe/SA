@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 147458882}
   - component: {fileID: 147458881}
   m_Layer: 0
-  m_Name: spawner1
+  m_Name: spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -257,6 +257,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 5973221616263341808, guid: e51f0d767fc9484489244c075a5d1775, type: 3}
+  stage1Spawn: {fileID: 334594031}
+  stage2Spawn: {fileID: 167440303}
 --- !u!4 &147458882
 Transform:
   m_ObjectHideFlags: 0
@@ -272,6 +274,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &167440302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 167440303}
+  m_Layer: 0
+  m_Name: SpawnPoint2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &167440303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 167440302}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 45.5, y: 48.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &334594029
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,27 +314,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 334594031}
-  - component: {fileID: 334594030}
   m_Layer: 0
-  m_Name: spawner2
+  m_Name: SpawnPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &334594030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 334594029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a449415ad6e03e644aedb9753710eaa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 5973221616263341808, guid: e51f0d767fc9484489244c075a5d1775, type: 3}
 --- !u!4 &334594031
 Transform:
   m_ObjectHideFlags: 0
@@ -418,3 +437,4 @@ SceneRoots:
   - {fileID: 127855966}
   - {fileID: 147458882}
   - {fileID: 334594031}
+  - {fileID: 167440303}
