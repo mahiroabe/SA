@@ -8,7 +8,6 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] private Transform stage2Spawn;   // ステージ2の初期位置
 
     private GameObject myPlayer;
-    private int currentStage = 1;                     // 現在のステージ番号（初期値は1）       goaltriggerに持っていく
 
     void Start()
     {
@@ -34,22 +33,12 @@ public class PlayerSpawner : MonoBehaviour
     }
 
     // そのプレイヤーだけを次のステージへ移動
-    public void GoToNextStage()
+    public void GoToNextStage(int nextStage)
     {
         if (myPlayer == null) return;
 
-        currentStage++;
-
-        // ステージ数を超えたら最終ステージで止まる
-        if (currentStage > 3)
-        {
-            currentStage = 3;
-            Debug.Log("最終ステージに到達しました！");
-            return;
-        }
-
         // 自分のプレイヤーの位置だけ変更（他プレイヤーには影響なし）
-        myPlayer.transform.position = GetSpawnPosition(currentStage);
-        Debug.Log($"ステージ {currentStage} に移動しました");
+        myPlayer.transform.position = GetSpawnPosition(nextStage);
+        Debug.Log($"ステージ {nextStage} に移動しました");
     }
 }
