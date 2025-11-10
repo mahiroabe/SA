@@ -24,9 +24,6 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
 
     // 【ダッシュ用】
     private bool isRunning = false;
-    private float lastWPressTime = -1f;
-    private float doubleTapThreshold = 0.3f; // 2回押し判定時間
-
     public float walkSpeed = 4f;
     public float runSpeed = 8f;
 
@@ -100,7 +97,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         RotateBody();           // 体の向き制御
         UpdateState();
 
-        // --- 視点切り替え（TPS ⇔ FPS） ---
+        // 視点切り替え（TPS ⇔ FPS）
         if (Input.GetKeyDown(KeyCode.F5))
             isFPS = !isFPS;
     }
