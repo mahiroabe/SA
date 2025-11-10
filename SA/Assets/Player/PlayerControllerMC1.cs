@@ -1,6 +1,6 @@
 using Photon.Pun;
 using UnityEngine;
-public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
+public class PlayerControllerMC1 : MonoBehaviourPun, IPunObservable
 {
     enum PlayerState
     {
