@@ -100,8 +100,6 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         RotateBody();           // 体の向き制御
         UpdateState();
 
-        animator.SetFloat("Speed", rb.velocity.magnitude);
-
         // --- 視点切り替え（TPS ⇔ FPS） ---
         if (Input.GetKeyDown(KeyCode.F5))
             isFPS = !isFPS;
@@ -238,7 +236,6 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            animator.SetTrigger("IsJumping");
         }
     }
 
@@ -273,17 +270,15 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
 
         bool isMoving = Mathf.Abs(h) > 0.1f || Mathf.Abs(v) > 0.1f;
 
-        // --- Wキーのシングル・ダブルタップ判定 ---
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            if (Time.time - lastWPressTime < doubleTapThreshold)
-            {
-                // ★ ダブルタップ：走る
-                isRunning = true;
-            }
-
-            lastWPressTime = Time.time;
-        }
+    // --- SHIFT + W で走る ---
+    if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
+    {
+        isRunning = true;
+    }
+    else
+    {
+        isRunning = false;
+    }
 
         // --- 移動していない間は状態を維持する ---
         if (!isMoving)
