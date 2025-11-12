@@ -380,7 +380,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         }
     }
 
-    // 実際にリスポーンする処理
+    // --- リスポーン処理 ---
     private void Respawn()
     {
         transform.position = respawnPoint;
@@ -394,7 +394,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         }
     }
 
-    // Checkpointタグのオブジェクトに触れたらリスポーン地点を更新
+    // --- リスポーン地点の更新 ---
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Checkpoint"))
