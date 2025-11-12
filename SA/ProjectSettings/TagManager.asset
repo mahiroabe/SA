@@ -7,6 +7,7 @@ TagManager:
   - MovingPlatform
   - Bullet
   - RotatingPlatform
+  - Checkpoint
   layers:
   - Default
   - TransparentFX

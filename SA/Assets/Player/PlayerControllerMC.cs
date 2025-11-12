@@ -42,6 +42,8 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     private float yaw;            // 水平方向の回転
     private float pitch;          // 垂直方向の回転
 
+    private Vector3 respawnPoint;  // 現在のリスポーン地点
+
     // 【床追従関連】
     private Transform currentPlatform;
     private Vector3 lastPlatformPos;
@@ -74,6 +76,9 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        // 初期位置をリスポーン地点として記録
+        respawnPoint = transform.position;
+
         // カメラが未設定なら自動で取得
         if (cam == null)
             cam = GetComponentInChildren<Camera>()?.transform;
@@ -100,6 +105,12 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         // 視点切り替え（TPS ⇔ FPS）
         if (Input.GetKeyDown(KeyCode.F5))
             isFPS = !isFPS;
+
+        // 一定高さ以下でリスポーン
+        if (transform.position.y < -5f)
+        {
+            Respawn();
+        }
     }
 
     // --- アニメーション状態更新 ---
@@ -366,6 +377,30 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
             Quaternion delta = Quaternion.Euler(lastAngularVelocity * Time.deltaTime * t);
             transform.rotation = delta * transform.rotation;
             rotationInertiaTimer += Time.deltaTime;
+        }
+    }
+
+    // 実際にリスポーンする処理
+    private void Respawn()
+    {
+        transform.position = respawnPoint;
+
+        // 落下中の速度をリセット（Rigidbodyがある場合）
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+    }
+
+    // Checkpointタグのオブジェクトに触れたらリスポーン地点を更新
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Checkpoint"))
+        {
+            respawnPoint = other.transform.position;
+            Debug.Log($"チェックポイント更新: {respawnPoint}");
         }
     }
 
