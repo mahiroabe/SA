@@ -281,11 +281,15 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     // --- SHIFT + W で走る ---
     if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
     {
-        isRunning = true;
+        // 地上にいる && すでに走っている または 十分に前進している
+        if (isGrounded || isRunning)
+            isRunning = true;
     }
     else
     {
-        isRunning = false;
+        // Wを離した時のみダッシュOFF
+        if (!Input.GetKey(KeyCode.LeftShift))
+            isRunning = false;
     }
 
         // --- 移動していない間は状態を維持する ---
