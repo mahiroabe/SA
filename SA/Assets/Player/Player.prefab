@@ -114,6 +114,8 @@ MonoBehaviour:
   cam: {fileID: 3275465356821216110}
   moveSpeed: 5
   jumpForce: 5
+  walkSpeed: 4
+  runSpeed: 8
   sensitivity: 2
   tpsDistance: 3
   isFPS: 0
@@ -177,8 +179,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.9880112, y: 4.827056, z: 2.008886}
-  m_Center: {x: 0.0014902949, y: 1.913528, z: 0.28199494}
+  m_Size: {x: 1.9880112, y: 0.06496209, z: 2.008886}
+  m_Center: {x: 0.0014902949, y: 0.049753875, z: 0.28199494}
 --- !u!95 &4394428740504638687
 Animator:
   serializedVersion: 7

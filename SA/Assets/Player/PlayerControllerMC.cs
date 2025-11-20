@@ -291,6 +291,8 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         // --- 移動していない間は状態を維持する ---
         if (!isMoving)
         {
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+
             // 完全に停止したら走り解除
             isRunning = false;
             return;
@@ -372,7 +374,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         }
         else if (rotationInertiaTimer < rotationInertiaTime)
         {
-            // --- 床から離れた後の慣性回転 ---
+            // --- 回転慣性だけを加える。位置には触れない ---
             float t = 1f - (rotationInertiaTimer / rotationInertiaTime);
             Quaternion delta = Quaternion.Euler(lastAngularVelocity * Time.deltaTime * t);
             transform.rotation = delta * transform.rotation;
