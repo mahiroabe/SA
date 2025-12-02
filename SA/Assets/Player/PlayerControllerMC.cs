@@ -403,6 +403,8 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     // --- リスポーン地点の更新 ---
     private void OnTriggerEnter(Collider other)
     {
+        if (!photonView.IsMine) return;
+
         if (other.CompareTag("Checkpoint"))
         {
             respawnPoint = other.transform.position;
