@@ -420,14 +420,12 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
             // 自分の状態を送信
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-            stream.SendNext(animator.GetFloat("Speed"));
         }
         else
         {
             // 他プレイヤーの状態を受信
             networkPos = (Vector3)stream.ReceiveNext();
             networkRot = (Quaternion)stream.ReceiveNext();
-            animator.SetFloat("Speed", (float)stream.ReceiveNext());
         }
     }
 
