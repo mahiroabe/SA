@@ -25,11 +25,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (string.IsNullOrEmpty(PhotonNetwork.NickName))
-        {
-            statusText.text = "名前を入力してください。";
-            return; // 名前が無い場合は接続しない
-        }
         // PUN接続開始
         statusText.text = "Connecting to Master...";
         // roomNameSearch.onValueChanged.AddListener(_ => RefreshRoomListUI()); 自動更新用
@@ -91,7 +86,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         // 🔥 部屋名未入力 → 警告出して終了
         if (string.IsNullOrEmpty(enteredName))
         {
-            roomNameStatusText.text = "部屋名を入力してください！";
+            roomNameStatusText.text = "Please enter the room name！";
             return;
         }
 
@@ -104,6 +99,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
             MaxPlayers = 5,
             IsOpen = true,
             IsVisible = true,
+            EmptyRoomTtl = 0, 
+            PlayerTtl = 0,
             Plugins = new string[0]
         };
 

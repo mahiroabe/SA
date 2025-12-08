@@ -6,37 +6,69 @@ using TMPro;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
+    [SerializeField] private TMP_InputField nameInputField; // 名前入力欄
+    [SerializeField] private TMP_Text statusText;           // 状態表示テキスト
+    [SerializeField] private GameObject connectButton;      // 接続ボタン
+
     private bool isConnecting = false;
-    TMP_Text text;
 
     private void Start()
     {
-        text = GetComponent<TMP_Text>();
+        // 初期は白文字に戻す
+        statusText.color = Color.white;
+
+        //保存された名前を自動入力
+        if (PlayerPrefs.HasKey("PlayerName"))
+        {
+            nameInputField.text = PlayerPrefs.GetString("PlayerName");
+        }
+
+        statusText.text = "Enter your name and press Start";
     }
 
-    void Update()
+    // UI Button の OnClick に登録する
+    public void StartConnection()
     {
-        // 左クリックしたら接続開始
-        if (Input.GetMouseButtonDown(0) && !isConnecting)
+        // 名前未記入なら赤い警告
+        if (string.IsNullOrWhiteSpace(nameInputField.text))
         {
-            isConnecting = true;
-            Debug.Log("Photonへ接続開始...");
-            text.text = "Connecting to Photon...";
-            PhotonNetwork.ConnectUsingSettings(); // Photonへ接続
+            statusText.color = Color.red;
+            statusText.text = "Please enter your name!";
+            return;
         }
+
+        if (isConnecting) return;
+        isConnecting = true;
+
+        // ボタン非表示
+        if (connectButton != null)
+            connectButton.SetActive(false);
+
+        // 通常ステータスは白色に戻す
+        statusText.color = Color.white;
+        statusText.text = "Connecting to Photon...";
+
+        // 名前をPhotonにセット
+        PhotonNetwork.NickName = nameInputField.text;
+
+        // 名前保存
+        PlayerPrefs.SetString("PlayerName", nameInputField.text);
+        PlayerPrefs.Save();
+
+        PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Master接続成功");
-        text.text = "Connected to Master Server";
-        PhotonNetwork.JoinLobby(); // ロビー参加
+        statusText.color = Color.white;
+        statusText.text = "Connected to Master Server";
+        PhotonNetwork.JoinLobby();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("Lobbyに参加しました");
-        text.text = "Joined Lobby";
-        SceneManager.LoadScene("Lobby"); // Lobbyシーンへ遷移
+        statusText.color = Color.white;
+        statusText.text = "Joined Lobby";
+        SceneManager.LoadScene("Lobby");
     }
 }
