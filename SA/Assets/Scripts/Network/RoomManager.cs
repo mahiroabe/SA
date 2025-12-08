@@ -12,9 +12,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
 {
     [Header("UI References")]
     [SerializeField] private TMP_InputField roomNameInput;   // 部屋名入力欄
+    [SerializeField] private TMP_InputField roomNameSearch;  // 部屋名検索入力欄
     [SerializeField] private Transform roomListParent;       // ScrollView Content
     [SerializeField] private GameObject roomEntryPrefab;     // ルーム1件プレハブ
-    [SerializeField] private TMP_Text statusText;            // 状態表示（任意）
+    [SerializeField] private TMP_Text statusText;            // 状態表示
+    [SerializeField] private TMP_Text roomNameStatusText;    // ロビーの名前の記入状態警告
 
     // 内部用
     private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>();
@@ -23,9 +25,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        if (string.IsNullOrEmpty(PhotonNetwork.NickName))
+        {
+            statusText.text = "名前を入力してください。";
+            return; // 名前が無い場合は接続しない
+        }
         // PUN接続開始
         statusText.text = "Connecting to Master...";
-        // PhotonNetwork.AutomaticallySyncScene = true; // 同じシーンを全員に同期
+        // roomNameSearch.onValueChanged.AddListener(_ => RefreshRoomListUI()); 自動更新用
     }
 
     #region PUN Callback
@@ -73,22 +80,31 @@ public class RoomManager : MonoBehaviourPunCallbacks
         Debug.Log("OnJoinedRoom()");
     }
     #endregion
-    
+
 
     #region UI Buttons
     /// <summary>「Create」ボタンから呼ぶ</summary>
     public void CreateRoom()
     {
-        string roomName = string.IsNullOrEmpty(roomNameInput.text)
-            ? $"Room_{Random.Range(1000, 9999)}"
-            : roomNameInput.text;
+        string enteredName = roomNameInput.text;
+
+        // 🔥 部屋名未入力 → 警告出して終了
+        if (string.IsNullOrEmpty(enteredName))
+        {
+            roomNameStatusText.text = "部屋名を入力してください！";
+            return;
+        }
+
+        roomNameStatusText.text = ""; // 警告消す
+
+        string roomName = enteredName;
 
         RoomOptions options = new RoomOptions
         {
             MaxPlayers = 5,
             IsOpen = true,
             IsVisible = true,
-            Plugins = new string[0]  // これで「プラグインなし」を強制
+            Plugins = new string[0]
         };
 
         PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
@@ -97,7 +113,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         Debug.Log("CreateRoom()");
     }
 
-
     /// <summary>RoomEntryUI から呼ばれる参加処理</summary>
     public void JoinRoom(string roomName)
     {
@@ -105,21 +120,38 @@ public class RoomManager : MonoBehaviourPunCallbacks
         statusText.text = $"Joining Room : {roomName}";
         Debug.Log("JoinRoom(string roomName)");
     }
+
+    /// <summary>検索ボタンから呼ぶ</summary>
+    public void OnSearchButton()
+    {
+        RefreshRoomListUI();
+    }
     #endregion
 
     /// <summary>ルーム一覧UIを更新</summary>
     private void RefreshRoomListUI()
     {
+        string keyword = roomNameSearch.text.ToLower();
+
         foreach (Transform child in roomListParent)
             Destroy(child.gameObject);
 
         foreach (var info in cachedRoomList.Values)
         {
+            // 検索フィルタ
+            if (!string.IsNullOrEmpty(keyword) &&
+                !info.Name.ToLower().Contains(keyword))
+                continue;
+
+            // 満員なら UI を作らない
+            if (info.PlayerCount >= info.MaxPlayers)
+                continue;
+
             GameObject entry = Instantiate(roomEntryPrefab, roomListParent);
-            entry.GetComponent<RoomEntryUI>().Setup(info.Name, this);
+            entry.GetComponent<RoomEntryUI>().Setup(info, this);
         }
-        Debug.Log("RefreshRoomListUI()");
     }
+
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {

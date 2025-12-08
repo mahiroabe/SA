@@ -1,22 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Photon.Realtime;
 
-/// <summary>
-/// 部屋名を表示し Join ボタンを押すと RoomManager.JoinRoom を呼ぶ
-/// </summary>
 public class RoomEntryUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text roomNameText;
+    [SerializeField] private TMP_Text roomNameText;     // ロビーの名前
+    [SerializeField] private TMP_Text playerCountText;  // プレイヤーの人数
+    [SerializeField] private Button joinButton;         // 参加ボタン
+
     private string roomName;
     private RoomManager manager;
 
-    public void Setup(string name, RoomManager mgr)
+    public void Setup(RoomInfo info, RoomManager mgr)
     {
-        roomName = name;
+        roomName = info.Name;
         manager = mgr;
-        roomNameText.text = name;
 
+        roomNameText.text = info.Name;
+        playerCountText.text = $"{info.PlayerCount} / {info.MaxPlayers}";
+
+        // 満員なら Join ボタンを無効化
+        if (info.PlayerCount >= info.MaxPlayers)
+        {
+            joinButton.interactable = false;
+        }
+        else
+        {
+            joinButton.interactable = true;
+        }
     }
 
     public void OnClickJoin()
