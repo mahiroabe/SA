@@ -171,6 +171,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void Quit()
+    {
+        // ゲーム終了
+        Application.Quit();
+
+        // Unity エディタで動作確認するため
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
+
     [PunRPC]
     void LoadNextStageRPC()
     {

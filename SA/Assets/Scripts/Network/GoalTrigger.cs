@@ -5,6 +5,7 @@ public class GoalTrigger : MonoBehaviour
 {
     [Tooltip("ステージ番号")]
     public int StageIndex = 1;
+    public bool Goal = false;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -22,6 +23,12 @@ public class GoalTrigger : MonoBehaviour
                 else
                 {
                     Debug.LogWarning("GoalTrigger: PlayerSpawner が見つかりません。");
+                }
+                PlayerTimer timer = other.GetComponent<PlayerTimer>();
+                if (timer != null && Goal == true)
+                {
+                    timer.StopTimer();
+                    Debug.Log("ゴール！タイマー停止。記録: " + timer.GetTime());
                 }
             }
         }

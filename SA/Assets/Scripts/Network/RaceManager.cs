@@ -1,6 +1,5 @@
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
 using TMPro;
 
 public class RaceManager : MonoBehaviourPunCallbacks
@@ -9,13 +8,10 @@ public class RaceManager : MonoBehaviourPunCallbacks
 
     [Header("UI")]
     public TMP_Text countdownText;
-    public TMP_Text timerText;
 
     [Header("Settings")]
     public Transform startPoint;   // 全員のスタート地点
 
-    private float time;
-    private bool isTimerRunning = false;
     private int playersInside = 0;
 
     void Awake()
@@ -23,38 +19,29 @@ public class RaceManager : MonoBehaviourPunCallbacks
         Instance = this;
     }
 
-    void Update()
-    {
-        if (isTimerRunning)
-        {
-            time += Time.deltaTime;
-            timerText.text = time.ToString("F2");
-        }
-    }
-
     // ────────────────────────────
-    // プレイヤーがトリガーに入った時に呼ぶ
+    // プレイヤーがスタートゾーンに入った
     // ────────────────────────────
     public void PlayerEnteredStartZone()
     {
         playersInside++;
 
-        // 全員入ったらMasterがカウントダウン開始
-        if (PhotonNetwork.IsMasterClient && playersInside == PhotonNetwork.CurrentRoom.PlayerCount)
+        // 全員入った → MasterClient がカウントダウン開始
+        if (PhotonNetwork.IsMasterClient &&
+            playersInside == PhotonNetwork.CurrentRoom.PlayerCount)
         {
             photonView.RPC("StartCountdownRPC", RpcTarget.All);
         }
     }
 
     // ────────────────────────────
-    // カウントダウン（同期）
+    // カウントダウン開始（全体同期）
     // ────────────────────────────
     [PunRPC]
     public void StartCountdownRPC()
     {
         StartCoroutine(CountdownCoroutine());
     }
-
 
     private System.Collections.IEnumerator CountdownCoroutine()
     {
@@ -74,31 +61,62 @@ public class RaceManager : MonoBehaviourPunCallbacks
 
         countdownText.gameObject.SetActive(false);
 
-        // レース開始したのでロビー（部屋）を閉じる
+        // ────────────────────────────
+        // レース開始 → ロビー締め切り
+        // ────────────────────────────
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.CurrentRoom.IsOpen = false;     // 参加不可
-            PhotonNetwork.CurrentRoom.IsVisible = false;  // ロビー一覧に非表示
+            PhotonNetwork.CurrentRoom.IsOpen = false;    // 新規参加禁止
+            PhotonNetwork.CurrentRoom.IsVisible = false; // ロビー非表示
         }
 
-        // 全員ワープ
+        // ────────────────────────────
+        // 全プレイヤーをスタート地点へワープ
+        // ────────────────────────────
         photonView.RPC("TeleportAllPlayersRPC", RpcTarget.All);
 
-        // タイマー開始
-        isTimerRunning = true;
-        time = 0;
+        // ────────────────────────────
+        // 全プレイヤーのタイマー開始
+        // ────────────────────────────
+        photonView.RPC("StartAllPlayerTimersRPC", RpcTarget.All);
     }
 
     // ────────────────────────────
-    // 全プレイヤーをワープ（同期）
+    // 全プレイヤーをワープ（全体同期）
     // ────────────────────────────
     [PunRPC]
     void TeleportAllPlayersRPC()
     {
         GameObject player = PhotonNetwork.LocalPlayer.TagObject as GameObject;
+
         if (player != null)
         {
             player.transform.position = startPoint.position;
+
+            // 落下中の速度リセット
+            Rigidbody rb = player.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
+    }
+
+    // ────────────────────────────
+    // 各プレイヤーの PlayerTimer を開始
+    // ────────────────────────────
+    [PunRPC]
+    void StartAllPlayerTimersRPC()
+    {
+        var timers = FindObjectsByType<PlayerTimer>(FindObjectsSortMode.None);
+
+        foreach (var t in timers)
+        {
+            if (t.photonView.IsMine)
+            {
+                t.StartTimer();
+            }
         }
     }
 }
