@@ -13,6 +13,8 @@ public class RaceManager : MonoBehaviourPunCallbacks
     public Transform startPoint;   // 全員のスタート地点
 
     private int playersInside = 0;
+    public bool isCountdownStarted = false;
+
 
     void Awake()
     {
@@ -20,16 +22,33 @@ public class RaceManager : MonoBehaviourPunCallbacks
     }
 
     // ────────────────────────────
-    // プレイヤーがスタートゾーンに入った
+    // プレイヤーがスタートゾーンに
     // ────────────────────────────
+    // 入った
     public void PlayerEnteredStartZone()
     {
         playersInside++;
 
-        // 全員入った → MasterClient がカウントダウン開始
+        CheckStartCondition();
+    }
+
+    // 出た
+    public void PlayerExitedStartZone()
+    {
+        if (playersInside > 0)
+            playersInside--;
+
+        CheckStartCondition();
+    }
+
+    private void CheckStartCondition()
+    {
+        if (isCountdownStarted) return;
+
         if (PhotonNetwork.IsMasterClient &&
             playersInside == PhotonNetwork.CurrentRoom.PlayerCount)
         {
+            isCountdownStarted = true;
             photonView.RPC("StartCountdownRPC", RpcTarget.All);
         }
     }
@@ -40,8 +59,12 @@ public class RaceManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void StartCountdownRPC()
     {
+        isCountdownStarted = true;
+        playersInside = 0;  // ← ここでリセット
+
         StartCoroutine(CountdownCoroutine());
     }
+
 
     private System.Collections.IEnumerator CountdownCoroutine()
     {
@@ -79,6 +102,7 @@ public class RaceManager : MonoBehaviourPunCallbacks
         // 全プレイヤーのタイマー開始
         // ────────────────────────────
         photonView.RPC("StartAllPlayerTimersRPC", RpcTarget.All);
+        isCountdownStarted = false;
     }
 
     // ────────────────────────────

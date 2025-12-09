@@ -234,6 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 2834377264678159812}
+  isRunning: 0
 --- !u!1 &1697246849861924921
 GameObject:
   m_ObjectHideFlags: 0

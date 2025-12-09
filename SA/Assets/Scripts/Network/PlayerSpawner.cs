@@ -35,6 +35,17 @@ public class PlayerSpawner : MonoBehaviour
         // TagObject Ç…ìoò^
         PhotonNetwork.LocalPlayer.TagObject = myPlayer;
 
+        var ui = Object.FindFirstObjectByType<PlayerUI>();
+        if (ui != null)
+        {
+            var timer = myPlayer.GetComponentInChildren<PlayerTimer>();
+            if (timer != null)
+            {
+                ui.SetTimer(timer);
+                Debug.Log("PlayerSpawner: UI Ç… Timer Çìoò^ÇµÇ‹ÇµÇΩ");
+            }
+        }
+
         Debug.Log("PlayerSpawner: ÉvÉåÉCÉÑÅ[ê∂ê¨äÆóπ");
     }
 

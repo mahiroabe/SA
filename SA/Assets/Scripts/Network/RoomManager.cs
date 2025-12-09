@@ -83,10 +83,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         string enteredName = roomNameInput.text;
 
-        // 🔥 部屋名未入力 → 警告出して終了
+        // 部屋名未入力 → 警告出して終了
         if (string.IsNullOrEmpty(enteredName))
         {
-            roomNameStatusText.text = "Please enter the room name！";
+            roomNameStatusText.text = "Please enter the room name!";
             return;
         }
 

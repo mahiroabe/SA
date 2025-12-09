@@ -12607,7 +12607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StageIndex: 2
-  Goal: 0
+  Goal: 1
 --- !u!65 &1573895629
 BoxCollider:
   m_ObjectHideFlags: 0
