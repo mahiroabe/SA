@@ -71,4 +71,10 @@ public class Launcher : MonoBehaviourPunCallbacks
         statusText.text = "Joined Lobby";
         SceneManager.LoadScene("Lobby");
     }
+
+    public void Quit()
+    {
+        // ƒQ[ƒ€I—¹
+        Application.Quit();
+    }
 }
