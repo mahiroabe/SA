@@ -7,15 +7,21 @@ public class PlayerUI : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject pausePanel;
 
     private bool isOpen = false;
+    PlayerTimer timer;
 
     void Start()
     {
         pausePanel.SetActive(false);
+
+        timer = GetComponent<PlayerTimer>();
+
+        if (timer == null)
+            Debug.LogError("PlayerUI: PlayerTimer ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && timer.isRunning == false)
         {
             TogglePauseMenu();
         }
@@ -49,6 +55,7 @@ public class PlayerUI : MonoBehaviourPunCallbacks
     public void StartStage()
     {
         var spawner = Object.FindFirstObjectByType<PlayerSpawner>();
+        TogglePauseMenu();
         spawner.GoToStage(0);
     }
 }

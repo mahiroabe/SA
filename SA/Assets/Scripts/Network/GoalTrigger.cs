@@ -28,6 +28,7 @@ public class GoalTrigger : MonoBehaviour
                 if (timer != null && Goal == true)
                 {
                     timer.StopTimer();
+                    timer.isRunning = false;
                     Debug.Log("ゴール！タイマー停止。記録: " + timer.GetTime());
                 }
             }

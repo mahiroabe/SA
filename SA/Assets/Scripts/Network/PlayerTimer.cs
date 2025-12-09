@@ -7,7 +7,7 @@ public class PlayerTimer : MonoBehaviourPun
     public TMP_Text timerText;
 
     private float time = 0;
-    private bool isRunning = false;
+    public bool isRunning = false;
 
     void Update()
     {
