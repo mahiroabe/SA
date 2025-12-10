@@ -25,15 +25,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (PhotonNetwork.IsConnected)
-            PhotonNetwork.JoinLobby();
-        else
-            PhotonNetwork.ConnectUsingSettings();
-
-
         // PUN接続開始
         statusText.text = "Connecting to Master...";
         roomNameSearch.onValueChanged.AddListener(_ => RefreshRoomListUI()); // 自動更新用
+
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+            Debug.Log("Start: Connecting to Master...");
+        }
+        else
+        {
+            Debug.Log("Start: Already connected. Joining Lobby...");
+            // PhotonNetwork.JoinLobby();
+            statusText.text = "Joining Lobby...";
+        }
     }
 
     #region PUN Callback
@@ -48,6 +54,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         statusText.text = "Joined Lobby";
         Debug.Log("OnJoinedLobby()");
+        RefreshRoomListUI();
     }
 
     public override void OnDisconnected(DisconnectCause cause)
@@ -187,6 +194,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
             UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
+
+    public override void OnLeftRoom()
+    {
+        statusText.text = "Reconnecting...";
+        PhotonNetwork.JoinLobby();
+    }
+
 
     [PunRPC]
     void LoadNextStageRPC()

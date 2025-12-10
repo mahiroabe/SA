@@ -82,6 +82,9 @@ public class PlayerUI : MonoBehaviourPunCallbacks
         if (spawner != null)
             Destroy(spawner.gameObject);
 
+        if (!PhotonNetwork.IsConnected)
+            PhotonNetwork.ConnectUsingSettings();
+
         SceneManager.LoadScene("Lobby");
     }
 
