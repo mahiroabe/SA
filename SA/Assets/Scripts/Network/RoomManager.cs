@@ -27,7 +27,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         // PUN接続開始
         statusText.text = "Connecting to Master...";
-        // roomNameSearch.onValueChanged.AddListener(_ => RefreshRoomListUI()); 自動更新用
+        roomNameSearch.onValueChanged.AddListener(_ => RefreshRoomListUI()); // 自動更新用
     }
 
     #region PUN Callback
