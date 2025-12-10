@@ -37,7 +37,7 @@ public class PlayerNameDisplay : MonoBehaviourPun
         // ì™ÇÃà íuÇ…í«è]
         if (target != null)
         {
-            nameText.transform.position = target.position + new Vector3(0, 0.2f, 0);
+            nameText.transform.position = target.position + new Vector3(0, 2.0f, 0);
         }
     }
 }

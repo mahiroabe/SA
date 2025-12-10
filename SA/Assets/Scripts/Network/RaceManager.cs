@@ -143,4 +143,19 @@ public class RaceManager : MonoBehaviourPunCallbacks
             }
         }
     }
+
+    [PunRPC]
+    private void RPC_PlayerEntered()
+    {
+        playersInside++;
+        CheckStartCondition();
+    }
+
+    [PunRPC]
+    private void RPC_PlayerExited()
+    {
+        playersInside = Mathf.Max(0, playersInside - 1);
+        CheckStartCondition();
+    }
+
 }

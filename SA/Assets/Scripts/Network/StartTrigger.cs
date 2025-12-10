@@ -7,11 +7,15 @@ public class StartTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        // 自分のプレイヤーだけが入ったとき通知
         PhotonView view = other.GetComponent<PhotonView>();
+
+        // 自分のプレイヤーだけ通知
         if (view != null && view.IsMine)
         {
-            RaceManager.Instance.PlayerEnteredStartZone();
+            RaceManager.Instance.photonView.RPC(
+                "RPC_PlayerEntered",
+                RpcTarget.MasterClient
+            );
         }
     }
 
@@ -19,11 +23,14 @@ public class StartTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        // 自分のプレイヤーだけが出たとき通知
         PhotonView view = other.GetComponent<PhotonView>();
+
         if (view != null && view.IsMine)
         {
-            RaceManager.Instance.PlayerExitedStartZone();
+            RaceManager.Instance.photonView.RPC(
+                "RPC_PlayerExited",
+                RpcTarget.MasterClient
+            );
         }
     }
 }
