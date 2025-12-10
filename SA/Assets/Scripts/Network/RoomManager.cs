@@ -25,9 +25,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        //if (!PhotonNetwork.InLobby)
-        PhotonNetwork.JoinLobby();
-        
+        if (PhotonNetwork.IsConnected)
+            PhotonNetwork.JoinLobby();
+        else
+            PhotonNetwork.ConnectUsingSettings();
+
 
         // PUN接続開始
         statusText.text = "Connecting to Master...";
