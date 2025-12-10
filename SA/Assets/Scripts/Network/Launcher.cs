@@ -62,6 +62,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         statusText.color = Color.white;
         statusText.text = "Connected to Master Server";
+        Debug.Log("joinLobby");
         PhotonNetwork.JoinLobby();
     }
 
