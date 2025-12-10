@@ -422,20 +422,24 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
-            // 自分の位置・回転
+            // 位置
             stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
 
-            // ★ アニメーション状態（enum）を送信
+            // ★ transform ではなく body の回転を送信
+            stream.SendNext(body.rotation);
+
+            // アニメーション状態
             stream.SendNext((int)currentState);
         }
         else
         {
-            // 他プレイヤーの位置・回転
+            // 位置を受信
             networkPos = (Vector3)stream.ReceiveNext();
+
+            // ★ body の回転を受信
             networkRot = (Quaternion)stream.ReceiveNext();
 
-            // ★ 他プレイヤーのアニメ状態を受信
+            // アニメーション状態を受信
             networkState = (PlayerState)(int)stream.ReceiveNext();
         }
     }
@@ -469,9 +473,21 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine)
         {
-            // スムーズな補間で同期
-            transform.position = Vector3.SmoothDamp(transform.position, networkPos, ref velocitySmooth, 0.1f);
-            transform.rotation = Quaternion.Slerp(transform.rotation, networkRot, Time.fixedDeltaTime * 10f);
+            // スムーズに位置補間
+            transform.position = Vector3.SmoothDamp(
+                transform.position,
+                networkPos,
+                ref velocitySmooth,
+                0.1f
+            );
+
+            // ★ body の回転だけ同期
+            body.rotation = Quaternion.Slerp(
+                body.rotation,
+                networkRot,
+                Time.fixedDeltaTime * 10f
+            );
         }
     }
+
 }
