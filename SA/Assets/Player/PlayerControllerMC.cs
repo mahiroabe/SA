@@ -57,9 +57,12 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     private Quaternion networkRot;
     private Vector3 velocitySmooth;
 
+    private PlayerState networkState;   // ← 他プレイヤーのアニメ状態を受信
+    private PlayerState lastNetworkState; // ← 再生中アニメの記録
+
     // 【アニメーション関連】
     private PlayerState currentState;
-    private PlayerState lastState;
+    //private PlayerState lastState;
 
     // --- 初期化 ---
     void Start()
@@ -94,23 +97,25 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     // --- フレーム更新 ---
     void Update()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine)
+        {
+            // ★ 他プレイヤーのアニメーション反映
+            PlayNetworkAnimation();
+            return;
+        }
 
-        HandleView();           // カメラ制御
-        HandleMovementState();  // 移動状態処理
-        Jump();                 // ジャンプ
-        RotateBody();           // 体の向き制御
+        // --- 自分だけ ---
+        HandleView();
+        HandleMovementState();
+        Jump();
+        RotateBody();
         UpdateState();
 
-        // 視点切り替え（TPS ⇔ FPS）
         if (Input.GetKeyDown(KeyCode.F5))
             isFPS = !isFPS;
 
-        // 一定高さ以下でリスポーン
         if (transform.position.y < -5f)
-        {
             Respawn();
-        }
     }
 
     // --- アニメーション状態更新 ---
@@ -417,17 +422,47 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
-            // 自分の状態を送信
+            // 自分の位置・回転
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
+
+            // ★ アニメーション状態（enum）を送信
+            stream.SendNext((int)currentState);
         }
         else
         {
-            // 他プレイヤーの状態を受信
+            // 他プレイヤーの位置・回転
             networkPos = (Vector3)stream.ReceiveNext();
             networkRot = (Quaternion)stream.ReceiveNext();
+
+            // ★ 他プレイヤーのアニメ状態を受信
+            networkState = (PlayerState)(int)stream.ReceiveNext();
         }
     }
+
+    void PlayNetworkAnimation()
+    {
+        if (networkState == lastNetworkState) return;
+
+        lastNetworkState = networkState;
+
+        switch (networkState)
+        {
+            case PlayerState.Idle:
+                animator.Play("Idle");
+                break;
+            case PlayerState.Move:
+                animator.Play("Walk");
+                break;
+            case PlayerState.Run:
+                animator.Play("Run");
+                break;
+            case PlayerState.Jump:
+                animator.Play("Jump");
+                break;
+        }
+    }
+
 
     // --- 位置補間（他プレイヤーのみ） ---
     void FixedUpdate()
