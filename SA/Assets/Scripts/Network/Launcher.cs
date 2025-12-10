@@ -69,8 +69,14 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         statusText.color = Color.white;
         statusText.text = "Joined Lobby";
+        Invoke(nameof(LoadLobbyScene), 0.2f);
+    }
+
+    private void LoadLobbyScene()
+    {
         SceneManager.LoadScene("Lobby");
     }
+
 
     public void Quit()
     {
