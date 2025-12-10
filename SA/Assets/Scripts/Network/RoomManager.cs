@@ -25,8 +25,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (!PhotonNetwork.InLobby)
-            PhotonNetwork.JoinLobby();
+        //if (!PhotonNetwork.InLobby)
+        //    PhotonNetwork.JoinLobby();
         
 
         // PUN接続開始
