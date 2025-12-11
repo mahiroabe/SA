@@ -6,6 +6,7 @@ public class GoalTrigger : MonoBehaviour
     [Tooltip("ステージ番号")]
     public int StageIndex = 1;
     public bool Goal = false;
+    public bool Practice = false;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -17,7 +18,7 @@ public class GoalTrigger : MonoBehaviour
             {
                 var spawner = Object.FindFirstObjectByType<PlayerSpawner>();
                 PlayerTimer timer = other.GetComponent<PlayerTimer>();
-                if (spawner != null && timer.isRunning)
+                if (spawner != null && (timer.isRunning || Practice))
                 {
                     spawner.GoToStage(StageIndex);
                 }

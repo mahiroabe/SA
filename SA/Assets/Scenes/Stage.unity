@@ -1131,6 +1131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 3
   Goal: 0
+  Practice: 1
 --- !u!65 &124241059
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2533,6 +2534,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 1
   Goal: 0
+  Practice: 1
 --- !u!65 &287411089
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4341,6 +4343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 3
   Goal: 0
+  Practice: 0
 --- !u!65 &412735703
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7487,6 +7490,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 0
   Goal: 1
+  Practice: 0
 --- !u!65 &896672643
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9714,6 +9718,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 4
   Goal: 0
+  Practice: 1
 --- !u!1 &1118028953
 GameObject:
   m_ObjectHideFlags: 0
@@ -13453,6 +13458,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 2
   Goal: 0
+  Practice: 1
 --- !u!65 &1557465858
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13698,6 +13704,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 2
   Goal: 0
+  Practice: 0
 --- !u!65 &1573895629
 BoxCollider:
   m_ObjectHideFlags: 0
