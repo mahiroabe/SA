@@ -14,6 +14,8 @@ public class PlayerNameDisplay : MonoBehaviourPun
         // 他人と自分の名前をセット
         nameText.text = photonView.Owner.NickName;
 
+        nameText.color = Color.black;
+
         cam = Camera.main;
 
         // 自分自身の頭上ネームだけ非表示にしたい場合
