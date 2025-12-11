@@ -16,15 +16,19 @@ public class GoalTrigger : MonoBehaviour
             if (view != null && view.IsMine)
             {
                 var spawner = Object.FindFirstObjectByType<PlayerSpawner>();
-                if (spawner != null)
+                PlayerTimer timer = other.GetComponent<PlayerTimer>();
+                if (spawner != null && timer.isRunning)
                 {
                     spawner.GoToStage(StageIndex);
+                }
+                else if (spawner != null && !timer.isRunning)
+                {
+                    spawner.GoToStage(0);
                 }
                 else
                 {
                     Debug.LogWarning("GoalTrigger: PlayerSpawner Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÅB");
                 }
-                PlayerTimer timer = other.GetComponent<PlayerTimer>();
                 if (timer != null && Goal == true)
                 {
                     timer.StopTimer();
