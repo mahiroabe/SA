@@ -9712,7 +9712,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0de2e51d6849d2943826c47845b6dd82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StageIndex: 6
+  StageIndex: 4
   Goal: 0
 --- !u!1 &1118028953
 GameObject:
