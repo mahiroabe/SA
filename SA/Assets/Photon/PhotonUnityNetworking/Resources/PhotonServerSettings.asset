@@ -45,6 +45,7 @@ MonoBehaviour:
   - StartAllPlayerTimersRPC
   - RPC_PlayerEntered
   - RPC_PlayerExited
+  - PlayClearSE
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

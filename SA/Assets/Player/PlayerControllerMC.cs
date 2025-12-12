@@ -64,6 +64,11 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     private PlayerState currentState;
     //private PlayerState lastState;
 
+    // 【SE関連】
+    public AudioSource audioSource;
+    public AudioClip jumpSE;
+    public AudioClip respawnSE;
+
     // --- 初期化 ---
     void Start()
     {
@@ -249,6 +254,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            audioSource.PlayOneShot(jumpSE);
         }
     }
 
@@ -402,6 +408,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         {
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+            audioSource.PlayOneShot(respawnSE);
         }
     }
 
