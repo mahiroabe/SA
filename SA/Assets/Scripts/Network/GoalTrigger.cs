@@ -8,7 +8,7 @@ public class GoalTrigger : MonoBehaviour
     public bool Goal = false;
     public bool Practice = false;
 
-    private void OnTriggerEnter(Collider other)
+    public virtual void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
