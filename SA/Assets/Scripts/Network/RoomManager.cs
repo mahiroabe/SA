@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// PUN2 の接続〜ロビー〜部屋一覧〜参加を管理
@@ -54,7 +55,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         statusText.text = "Joined Lobby";
         Debug.Log("OnJoinedLobby()");
-        RefreshRoomListUI();
+        // ロビー再参加で強制更新
+        StartCoroutine(ForceRefreshLobby());
     }
 
     public override void OnDisconnected(DisconnectCause cause)
@@ -207,5 +209,20 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         // 各部屋ごとに個別でステージ移行
         PhotonNetwork.LoadLevel("Stage02");
+    }
+
+    IEnumerator ForceRefreshLobby()
+    {
+        // 少し待つ（サーバー安定待ち）
+        yield return new WaitForSeconds(0.2f);
+
+        // ロビーを一度出る
+        PhotonNetwork.LeaveLobby();
+
+        // 完全に出るまで待つ
+        yield return new WaitUntil(() => !PhotonNetwork.InLobby);
+
+        // 再度ロビーへ
+        PhotonNetwork.JoinLobby();
     }
 }
