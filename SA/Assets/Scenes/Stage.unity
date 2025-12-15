@@ -12406,7 +12406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StageIndex: 0
-  Goal: 0
+  Goal: 1
   Practice: 0
 --- !u!65 &412735703
 BoxCollider:
