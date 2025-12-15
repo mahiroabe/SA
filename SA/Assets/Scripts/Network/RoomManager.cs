@@ -144,6 +144,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private void RefreshRoomListUI()
     {
         string keyword = roomNameSearch.text.ToLower();
+        Debug.Log($"RefreshRoomListUI called : cachedRoomList = {cachedRoomList.Count}");
 
         foreach (Transform child in roomListParent)
             Destroy(child.gameObject);
@@ -159,11 +160,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
             if (info.PlayerCount >= info.MaxPlayers)
                 continue;
 
+            Debug.Log($"UI create: {info.Name}");
             GameObject entry = Instantiate(roomEntryPrefab, roomListParent);
             entry.GetComponent<RoomEntryUI>().Setup(info, this);
         }
     }
-
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
