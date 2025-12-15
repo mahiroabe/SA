@@ -75,6 +75,14 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
 
+        // 他プレイヤーは物理停止
+        if (!photonView.IsMine)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+            rb.detectCollisions = false;
+        }
+
         animator.applyRootMotion = false;
 
         // 回転制限（倒れ防止）
