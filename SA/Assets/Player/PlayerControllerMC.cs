@@ -73,6 +73,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     [Header("Ground Check")]
     public float groundCheckDistance = 1f;
     public LayerMask groundLayer;
+    bool wasGrounded;
 
     // --- 初期化 ---
     void Start()
@@ -123,6 +124,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         }
 
         // --- 自分だけ ---
+        wasGrounded = isGrounded;
         CheckGround();
         HandleView();
         HandleMovementState();
@@ -150,8 +152,12 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         PlayerState newState;
 
-        // 状態判定
-        if (!isGrounded)
+        // 着地した瞬間
+        if (!wasGrounded && isGrounded)
+        {
+            newState = PlayerState.Idle;
+        }
+        else if (!isGrounded)
         {
             newState = PlayerState.Jump;
         }
@@ -162,36 +168,25 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
             if (speed < 0.1f)
                 newState = PlayerState.Idle;
             else if (isRunning)
-                newState = PlayerState.Move; // 歩き
+                newState = PlayerState.Run;
             else
-                newState = PlayerState.Run; // 走り
+                newState = PlayerState.Move;
         }
 
-        // 状態が変わったときだけアニメーション変更
         if (newState != currentState)
         {
             currentState = newState;
 
             switch (currentState)
             {
-                case PlayerState.Idle:
-                    animator.Play("Idle");
-                    break;
-
-                case PlayerState.Move:
-                    animator.Play("Run");
-                    break;
-
-                case PlayerState.Run:
-                    animator.Play("Walk");
-                    break;
-
-                case PlayerState.Jump:
-                    animator.Play("Jump");
-                    break;
+                case PlayerState.Idle: animator.Play("Idle"); break;
+                case PlayerState.Move: animator.Play("Walk"); break;
+                case PlayerState.Run: animator.Play("Run"); break;
+                case PlayerState.Jump: animator.Play("Jump"); break;
             }
         }
     }
+
 
     // --- カメラ処理 ---
     void HandleView()
@@ -275,7 +270,6 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            isGrounded = false;
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             audioSource.PlayOneShot(jumpSE);
         }
