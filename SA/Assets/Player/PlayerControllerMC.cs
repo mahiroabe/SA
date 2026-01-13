@@ -71,7 +71,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
 
     // 接地判定
     [Header("Ground Check")]
-    public float groundCheckDistance = 1f;
+    public float groundCheckDistance;
     public LayerMask groundLayer;
     bool wasGrounded;
 
