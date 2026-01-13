@@ -71,7 +71,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
 
     // 接地判定
     [Header("Ground Check")]
-    public float groundCheckDistance = 0.2f;
+    public float groundCheckDistance = 1f;
     public LayerMask groundLayer;
 
     // --- 初期化 ---
@@ -374,13 +374,24 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     void CheckGround()
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
-        isGrounded = Physics.Raycast(
+
+        bool hit = Physics.Raycast(
             origin,
             Vector3.down,
+            out RaycastHit hitInfo,
             groundCheckDistance,
             groundLayer
         );
+
+        isGrounded = hit;
+
+        Debug.DrawRay(
+            origin,
+            Vector3.down * groundCheckDistance,
+            hit ? Color.green : Color.red
+        );
     }
+
 
     // --- 移動床追従処理 ---
     void LateUpdate()
