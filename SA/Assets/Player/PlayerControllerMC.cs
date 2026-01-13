@@ -69,6 +69,11 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     public AudioClip jumpSE;
     public AudioClip respawnSE;
 
+    // 接地判定
+    [Header("Ground Check")]
+    public float groundCheckDistance = 0.2f;
+    public LayerMask groundLayer;
+
     // --- 初期化 ---
     void Start()
     {
@@ -118,6 +123,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         }
 
         // --- 自分だけ ---
+        CheckGround();
         HandleView();
         HandleMovementState();
         Jump();
@@ -261,6 +267,7 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
+            isGrounded = false;
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             audioSource.PlayOneShot(jumpSE);
         }
@@ -331,15 +338,11 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     // --- 床との接触判定 ---
     void OnCollisionStay(Collision collision)
     {
-        bool groundedThisFrame = false;
-
         foreach (ContactPoint contact in collision.contacts)
         {
             if (Vector3.Dot(contact.normal, Vector3.up) > 0.7f)
             {
-                groundedThisFrame = true;
-
-                // 移動床への追従設定
+                // 移動床への追従設定だけ行う
                 if (collision.gameObject.CompareTag("MovingPlatform") ||
                     collision.gameObject.CompareTag("RotatingPlatform"))
                 {
@@ -352,16 +355,23 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
                 }
             }
         }
-
-        isGrounded = groundedThisFrame;
     }
 
     void OnCollisionExit(Collision collision)
     {
         if (collision.transform == currentPlatform)
             currentPlatform = null;
+    }
 
-        isGrounded = false;
+    void CheckGround()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        isGrounded = Physics.Raycast(
+            origin,
+            Vector3.down,
+            groundCheckDistance,
+            groundLayer
+        );
     }
 
     // --- 移動床追従処理 ---
