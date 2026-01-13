@@ -133,8 +133,16 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
         if (Input.GetKeyDown(KeyCode.F5))
             isFPS = !isFPS;
 
-        if (transform.position.y < -5f)
+        if (transform.position.y < -5f || CompareTag("DeathWall"))
             Respawn();
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("DeathWall"))
+        {
+            Respawn();
+        }
     }
 
     // --- アニメーション状態更新 ---
@@ -154,9 +162,9 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
             if (speed < 0.1f)
                 newState = PlayerState.Idle;
             else if (isRunning)
-                newState = PlayerState.Run; // 走り
-            else
                 newState = PlayerState.Move; // 歩き
+            else
+                newState = PlayerState.Run; // 走り
         }
 
         // 状態が変わったときだけアニメーション変更
@@ -171,11 +179,11 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
                     break;
 
                 case PlayerState.Move:
-                    animator.Play("Walk");
+                    animator.Play("Run");
                     break;
 
                 case PlayerState.Run:
-                    animator.Play("Run");
+                    animator.Play("Walk");
                     break;
 
                 case PlayerState.Jump:
