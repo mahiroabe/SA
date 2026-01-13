@@ -75,6 +75,11 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     public LayerMask groundLayer;
     bool wasGrounded;
 
+    // 義理ジャン猶予時間
+    [Header("Coyote Time")]
+    public float coyoteTime = 0.15f; // 義理ジャン猶予時間
+    private float coyoteTimer;
+
     // --- 初期化 ---
     void Start()
     {
@@ -268,8 +273,9 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     // --- ジャンプ処理 ---
     void Jump()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && coyoteTimer > 0f)
         {
+            coyoteTimer = 0f; // ★ 1回使ったら消費
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             audioSource.PlayOneShot(jumpSE);
         }
@@ -369,23 +375,30 @@ public class PlayerControllerMC : MonoBehaviourPun, IPunObservable
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
 
-        bool hit = Physics.Raycast(
+        bool grounded = Physics.Raycast(
             origin,
             Vector3.down,
-            out RaycastHit hitInfo,
             groundCheckDistance,
             groundLayer
         );
 
-        isGrounded = hit;
+        if (grounded)
+        {
+            isGrounded = true;
+            coyoteTimer = coyoteTime; // ★ 接地中はタイマー回復
+        }
+        else
+        {
+            isGrounded = false;
+            coyoteTimer -= Time.deltaTime; // ★ 空中で減少
+        }
 
         Debug.DrawRay(
             origin,
             Vector3.down * groundCheckDistance,
-            hit ? Color.green : Color.red
+            grounded ? Color.green : Color.red
         );
     }
-
 
     // --- 移動床追従処理 ---
     void LateUpdate()
