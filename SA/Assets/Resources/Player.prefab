@@ -142,6 +142,10 @@ MonoBehaviour:
   audioSource: {fileID: 6445395715585401507}
   jumpSE: {fileID: 8300000, guid: c9f57b22b7eb2c3499715da4f53ada1a, type: 3}
   respawnSE: {fileID: 8300000, guid: dd453eb84e87ac9409504c458a4d336b, type: 3}
+  groundCheckDistance: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &964418890795310933
 MonoBehaviour:
   m_ObjectHideFlags: 0
