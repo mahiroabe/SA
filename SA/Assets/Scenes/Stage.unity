@@ -4869,7 +4869,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 4
   Goal: 0
-  Practice: 0
+  Practice: 1
 --- !u!1 &125227026
 GameObject:
   m_ObjectHideFlags: 0
@@ -72734,7 +72734,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StageIndex: 0
-  Goal: 0
+  Goal: 1
   Practice: 0
 --- !u!65 &1984362675
 BoxCollider:
